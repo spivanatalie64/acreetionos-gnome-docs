@@ -1,0 +1,4 @@
+# Pinned for reproducible Read the Docs builds. Bump deliberately.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pymdown-extensions==11.0.2
