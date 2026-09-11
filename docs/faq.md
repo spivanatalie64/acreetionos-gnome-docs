@@ -36,6 +36,17 @@ The ISO build profile lives on the AcreetionOS GitLab at
 <https://gitlab.acreetionos.org>. This documentation is maintained in a separate
 repo mirrored to GitHub so Read the Docs can build it.
 
+### I'm running this in a VM and the resolution looks wrong
+
+This is a known, fixed issue: in some virtual machines the display resolution
+wasn't being set correctly at the login screen. The fix is a
+`setup-displays.sh` script (installed to `/usr/local/bin/` and marked
+executable via `profiledef.sh`) that uses `xrandr` to detect connected displays
+and set their resolution automatically. LightDM runs it via
+`display-setup-script` in `/etc/lightdm/lightdm.conf` before the login screen
+appears, so it should already be resolved on current images — if you still see
+it, it's worth filing as a regression.
+
 ### How do I edit these docs?
 
 Click the pencil icon at the top of any page — it links straight to the Markdown

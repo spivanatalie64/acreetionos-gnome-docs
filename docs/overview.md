@@ -42,9 +42,32 @@ Therefore:
 | **Freeman** (`/usr/local/bin/freeman`) | Package queries + image-update client.                        |
 | **`horizon-image-update`**       | Backend that downloads, verifies, and stages update images.          |
 | **`horizon-firstboot.sh`**       | First-boot onboarding dialog explaining Freeman and the `pacman` removal. |
-| **Calamares**                    | Bundled offline installer under `airootfs/etc/calamares/`.           |
+| **Calamares + `horizon-installer`** | Bundled offline installer with hardware detection and OS migration support. |
 | **Distrobox + App Hub**          | Safe place to install and launch extra applications.                 |
 | **Timeshift**                    | rsync snapshots on ext4 for rollback.                                |
+
+For how the pieces above are actually built — the staged GNOME compile, Freeman's
+Rust workspace, and the exact patched package versions — see
+[Architecture & Build Internals](architecture.md).
+
+## Pinned desktop versions
+
+The desktop stack is not "whatever GNOME 48.x Arch ships this week" — it is a
+specific, pinned set of sources (`xlibre-patches/packages.conf`) built with X11
+forced on and Wayland/Xwayland forced off:
+
+| Package           | Pinned tag | Notable meson flags                                   |
+| ------------------ | ---------- | ------------------------------------------------------ |
+| `mutter`           | `48.8`     | `-Dx11=true -Dwayland=false -Dxwayland=false`           |
+| `gnome-session`    | `48.0`     | `-Dx11=true`                                            |
+| `gdm`              | `48.0`     | `-Dx11-support=true -Dgdm-xsession=true -Dwayland-support=false` |
+| `gnome-shell`      | `48.8`     | `-Dtests=false`                                         |
+
+Each gets small, targeted downstream patches (for example, a Pango-renderer
+`autoptr` fix for `mutter`, an `ical` const-signature fix for `gnome-shell`, and a
+`stdbool` header fix for `gdm`) rather than wholesale forks — the goal is the
+smallest possible diff that keeps a native X11 session building against current
+GNOME 48 sources.
 
 ## Design principles
 
